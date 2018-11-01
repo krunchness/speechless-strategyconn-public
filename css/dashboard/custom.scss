@@ -1,0 +1,26 @@
+.login-wrap {
+    max-width: 490px;
+}
+
+.modal-btn-spaces {
+    display: inline-block;
+    padding: 0 15px;
+}
+
+.dataTables_paginate span {
+    display: inline-block;
+    padding: 0 5px;
+
+    a {
+        padding: 0 5px;
+    }
+}
+
+
+.au-btn-blue {
+    background: #112658;
+
+    &:hover, &:active{
+    	background: #3868cd;
+    }
+}
