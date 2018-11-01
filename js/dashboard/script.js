@@ -1,8 +1,5 @@
 $(document).ready( function () {
-    var table = $('#filesTable').dataTable({
-    	'pagingType' : 'simple_numbers'
-    });
-
+    
     function waitForElement(elementPath, callBack) {
       window.setTimeout(function() {
         if($(elementPath).length) {
@@ -14,12 +11,17 @@ $(document).ready( function () {
       },500)
     }
 
-    waitForElement(".dataTables_paginate",function(){
+    if ($('#mainDashboard').length != 0) {
+        var table = $('#filesTable').dataTable({
+            'pagingType' : 'simple_numbers'
+        });
 
-    	$('.dataTables_paginate a').on('click', function(e){
-    		e.preventDefault();
-    	});
-    });
+        waitForElement(".dataTables_paginate",function(){
+
+            $('.dataTables_paginate a').on('click', function(e){
+                e.preventDefault();
+            });
+        });
 
 
         $('.end_date, .start_date').change(function(){
@@ -72,12 +74,12 @@ $(document).ready( function () {
 
         $('.export-csv-btn').on('click', function(event){
 
-            event.preventDefault();
+        event.preventDefault();
 
-            var export_path = $(this).attr('href');
-            var inquiry_ids = $('.inquiries-datas').attr('download-only-ids');
+        var export_path = $(this).attr('href');
+        var inquiry_ids = $('.inquiries-datas').attr('download-only-ids');
 
-            if (inquiry_ids != '') {
+        if (inquiry_ids != '') {
 
                 window.open(export_path + '?inquiries_ids='+ inquiry_ids);
 
@@ -87,6 +89,35 @@ $(document).ready( function () {
 
             }
         });
+
+        $('.delete-inquiry-btn').on('click', function(){
+            var inquiryname = $(this).attr('data-name');
+            var inquiry_id = $(this).attr('delete-inquiry-id'); 
+            $('.inquiry-name').text(inquiryname);
+            $('.confirm-delete-btn').attr('data-id', inquiry_id);
+        });
+
+        var inst = $('[data-remodal-id=modal]').remodal();
+
+        $('.add-item-btn').on('click',function(){
+            inst.open();
+        });
+
+        $('.edit-user-btn').on('click', function(){
+
+            var user_data = JSON.parse($(this).attr('user-data'));
+            var update_user_path = $(this).attr('update-path');
+
+            $('.edit_username_input').val(user_data.username);
+            $('.edit_name_input').val(user_data.name);
+            $('.edit_email_input').val(user_data.email);
+            $('.edit_user_form').attr('action', update_user_path);
+            $('[data-remodal-id=edit_user]').remodal().open();
+
+        });
+    }
+
+    
 
     // $('.export-csv-btn').on('click', function(){
 
@@ -103,30 +134,38 @@ $(document).ready( function () {
       
     // });
 
-    $('.delete-inquiry-btn').on('click', function(){
-        var inquiryname = $(this).attr('data-name');
-        var inquiry_id = $(this).attr('delete-inquiry-id'); 
-        $('.inquiry-name').text(inquiryname);
-        $('.confirm-delete-btn').attr('data-id', inquiry_id);
-    });
+    function emptyInputValidation(selector, counter, message){
+        if ($(selector).val() == undefined || $(selector).val().replace(/\s/g,"") == "") {
 
-    var inst = $('[data-remodal-id=modal]').remodal();
+            $(selector).parent().find('.error-msg').css({ display: 'inline-block'});
 
-    $('.add-item-btn').on('click',function(){
-        inst.open();
-    });
+            counter++;
 
-    $('.edit-user-btn').on('click', function(){
+            return counter;
+        }else{
+            $(selector).parent().find('.error-msg').hide();
 
-        var user_data = JSON.parse($(this).attr('user-data'));
-        var update_user_path = $(this).attr('update-path');
+            return counter;
+        }
+    }
 
-        $('.edit_username_input').val(user_data.username);
-        $('.edit_name_input').val(user_data.name);
-        $('.edit_email_input').val(user_data.email);
-        $('.edit_user_form').attr('action', update_user_path);
-        $('[data-remodal-id=edit_user]').remodal().open();
+    $('#strategyform').submit(function(e){
+        e.preventDefault();
 
+        var errorCounter = 0;
+        var counter = 0;
+        var inputIds = ['#firstname_input', '#lastname_input',
+                        '#email_input', '#businessname_input',
+                        '#industry_input', '#mobileno_input'];
+
+        $.each(inputIds, function( index, target ) {
+          errorCounter = emptyInputValidation(target, errorCounter, 'First Name');
+        });
+
+        if (errorCounter == 0) {
+         $(this)[0].submit();
+        }
+        
     });
 
 

@@ -33,15 +33,15 @@ body {
     position: relative;
 }
 
-.submit-btn-blue{
+.submit-btn-blue {
     background-color: rgb(20, 43, 93);
     border-color: rgb(20, 43, 93);
 
-    &:hover, &:active{
+    &:hover, &:active {
         background: #3868cd;
     }
 
-    &:focus{
+    &:focus {
         box-shadow: 0 0 0 0.2rem rgb(20, 43, 93);
     }
 }
@@ -97,4 +97,24 @@ body {
     span {
         display: block;
     }
+}
+
+.site-logo {
+    img {
+        width: 100%;
+    }
+}
+
+.site-banner {
+    text-align: center;
+}
+
+.site-logo-container {
+    margin: 40px 0;
+}
+
+.error-msg{
+    color: red;
+    font-weight: bold;
+    display:none;
 }

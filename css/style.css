@@ -90,3 +90,21 @@ body {
 .form-note span {
   display: block;
 }
+
+.site-logo img {
+  width: 100%;
+}
+
+.site-banner {
+  text-align: center;
+}
+
+.site-logo-container {
+  margin: 40px 0;
+}
+
+.error-msg {
+  color: red;
+  font-weight: bold;
+  display: none;
+}
