@@ -77,11 +77,62 @@ $(document).ready( function () {
         });
 
 
-        $('.start_time').change(function(){
+        $('.start_time, .end_time').change(function(){
             var oTable = $('#filesTable').dataTable( {"bRetrieve": true} );
 
-            if ($('.start_date').val().length != 0) {
+            if ($('.start_date').val().length != 0 || $('.end_date').val().length != 0) {
+                var oTable = $('#filesTable').dataTable( {"bRetrieve": true} );
+                oTable.fnClearTable();
+                var datefilter_json_path = $('.inquiries-datas').attr('datefilter-json-path');
+                var start_date_val = $('.start_date').val();
+                var end_date_val = $('.end_date').val();
+                var start_time_val = $('.start_time').val();
+                var end_time_val = $('.end_time').val();
+                var datas = {
+                    start_date : start_date_val,
+                    end_date : end_date_val,
+                    start_time : start_time_val,
+                    end_time : end_time_val
+                };
 
+                $.get(datefilter_json_path, datas, function(result){
+
+                    var info_ids = [];
+                    $.each(result, function(index , value){
+                        var date = new Date(value.created_at.date)
+                        var month = date.getMonth() + 1;
+                        var parseDate = date.getFullYear() + '-' + month + '-' + date.getDate() + ' ';
+                        var fullDate = parseDate + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+
+
+                        oTable.fnAddData([
+                            fullDate,
+                            value.first_name,
+                            value.last_name,
+                            value.email,
+                            value.mobile_no,
+                            value.business_name,
+                            value.industry,
+                            value.buttons
+                        ]);
+
+                        info_ids.push(value.inquiry_id);
+
+                    });
+                    
+                    waitForElement("#filesTable tbody tr",function(){
+
+                        $('.delete-inquiry-btn').on('click', function(){
+                            var inquiryname = $(this).attr('data-name');
+                            var inquiry_id = $(this).attr('delete-inquiry-id'); 
+                            $('.inquiry-name').text(inquiryname);
+                            $('.confirm-delete-btn').attr('data-id', inquiry_id);
+                        });
+
+                        $('.inquiries-datas').attr('download-only-ids', info_ids);
+                    });
+                    
+                } );
             }
             // if (!$('.end_date, .start_date').val() != '') {}
             // oTable.fnFilter( '02:57', 0 );
@@ -93,9 +144,20 @@ $(document).ready( function () {
 
         var export_path = $(this).attr('href');
         var inquiry_ids = $('.inquiries-datas').attr('download-only-ids');
+        // var start_date_val = $('.start_date').val();
+        // var end_date_val = $('.end_date').val();
+        // var start_time_val = $('.start_time').val();
+        // var end_time_val = $('.end_time').val();
+
+        // var datas = {
+        //     start_date : start_date_val,
+        //     end_date : end_date_val,
+        //     start_time : start_time_val,
+        //     end_time : end_time_val
+        // };
 
         if (inquiry_ids != '') {
-
+            
                 window.open(export_path + '?inquiries_ids='+ inquiry_ids);
 
             }else{
@@ -153,7 +215,7 @@ $(document).ready( function () {
 
         if (selector == '#mobileno_input') {
             var mobile_no = $(selector).val().replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '');
-            
+
             if (mobile_no == undefined || mobile_no.replace(/\s/g,"") == "" || mobile_no.length != 10) {
 
                 $(selector).parent().find('.error-msg').css({ display: 'inline-block'});
