@@ -25,7 +25,7 @@ $(document).ready( function () {
 
 
         $('.end_date, .start_date').change(function(){
-            console.log(table);
+            // console.log(table);
             var oTable = $('#filesTable').dataTable( {"bRetrieve": true} );
             oTable.fnClearTable();
             var datefilter_json_path = $('.inquiries-datas').attr('datefilter-json-path');
@@ -37,19 +37,23 @@ $(document).ready( function () {
             };
 
             $.get(datefilter_json_path, datas, function(result){
-                // console.log(result[0].anniv_date);
 
                 var info_ids = [];
                 $.each(result, function(index , value){
+                    var date = new Date(value.created_at.date)
+                    var month = date.getMonth() + 1;
+                    var parseDate = date.getFullYear() + '-' + month + '-' + date.getDate() + ' ';
+                    var fullDate = parseDate + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+
+
                     oTable.fnAddData([
-                        value.created_at.date,
+                        fullDate,
                         value.first_name,
                         value.last_name,
-                        value.gender,
-                        value.birth_date,
-                        value.anniv_date,
+                        value.email,
                         value.mobile_no,
-                        value.cpconnect_question,
+                        value.business_name,
+                        value.industry,
                         value.buttons
                     ]);
 
@@ -70,6 +74,17 @@ $(document).ready( function () {
                 });
                 
             } );
+        });
+
+
+        $('.start_time').change(function(){
+            var oTable = $('#filesTable').dataTable( {"bRetrieve": true} );
+
+            if ($('.start_date').val().length != 0) {
+
+            }
+            // if (!$('.end_date, .start_date').val() != '') {}
+            // oTable.fnFilter( '02:57', 0 );
         });
 
         $('.export-csv-btn').on('click', function(event){
@@ -135,18 +150,38 @@ $(document).ready( function () {
     // });
 
     function emptyInputValidation(selector, counter, message){
-        if ($(selector).val() == undefined || $(selector).val().replace(/\s/g,"") == "") {
 
-            $(selector).parent().find('.error-msg').css({ display: 'inline-block'});
+        if (selector == '#mobileno_input') {
+            var mobile_no = $(selector).val().replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '');
+            
+            if (mobile_no == undefined || mobile_no.replace(/\s/g,"") == "" || mobile_no.length != 10) {
 
-            counter++;
+                $(selector).parent().find('.error-msg').css({ display: 'inline-block'});
 
-            return counter;
+                counter++;
+
+                return counter;
+            }else{
+                $(selector).parent().find('.error-msg').hide();
+
+                return counter;
+            }
+
         }else{
-            $(selector).parent().find('.error-msg').hide();
+            if ($(selector).val() == undefined || $(selector).val().replace(/\s/g,"") == "") {
 
-            return counter;
+                $(selector).parent().find('.error-msg').css({ display: 'inline-block'});
+
+                counter++;
+
+                return counter;
+            }else{
+                $(selector).parent().find('.error-msg').hide();
+
+                return counter;
+            }
         }
+        
     }
 
     $('#strategyform').submit(function(e){
