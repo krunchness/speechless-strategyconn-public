@@ -21,3 +21,7 @@
 .au-btn-blue:hover, .au-btn-blue:active {
   background: #3868cd;
 }
+
+.time_input {
+  display: none;
+}

@@ -24,17 +24,38 @@ $(document).ready( function () {
         });
 
 
-        $('.end_date, .start_date').change(function(){
+        $('.start_date').change(function(){
             // console.log(table);
+            $('.time_input').show();
+
             var oTable = $('#filesTable').dataTable( {"bRetrieve": true} );
+
             oTable.fnClearTable();
+
             var datefilter_json_path = $('.inquiries-datas').attr('datefilter-json-path');
             var start_date_val = $('.start_date').val();
-            var end_date_val = $('.end_date').val()
-            var datas = {
-                start_date : start_date_val,
-                end_date : end_date_val
-            };
+            var end_date_val = $('.end_date').val();
+            var start_time_val = $('.start_time').val();
+            var end_time_val = $('.end_time').val();
+            var datas = {};
+
+            if (start_time_val != "") {
+
+                var ids = $('.inquiries-datas').attr('download-only-ids');
+
+                datas = {
+                    start_date : start_date_val,
+                    end_date : end_date_val,
+                    start_time : start_time_val,
+                    end_time : end_time_val,
+                    ids : ids
+                };
+            }else{
+                datas = {
+                    start_date : start_date_val,
+                    end_date : end_date_val
+                };
+            }
 
             $.get(datefilter_json_path, datas, function(result){
 
@@ -88,11 +109,14 @@ $(document).ready( function () {
                 var end_date_val = $('.end_date').val();
                 var start_time_val = $('.start_time').val();
                 var end_time_val = $('.end_time').val();
+                var ids = $('.inquiries-datas').attr('download-only-ids');
+
                 var datas = {
                     start_date : start_date_val,
                     end_date : end_date_val,
                     start_time : start_time_val,
-                    end_time : end_time_val
+                    end_time : end_time_val,
+                    ids : ids
                 };
 
                 $.get(datefilter_json_path, datas, function(result){
